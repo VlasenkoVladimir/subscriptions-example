@@ -1,0 +1,19 @@
+app:
+  top:
+    limit: 3
+
+server:
+  port: 8081
+
+spring:
+  application:
+    name:  subscriptions-example
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://subs-db:5432/subs-db
+    username: postgres
+    password: 12345
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create-drop

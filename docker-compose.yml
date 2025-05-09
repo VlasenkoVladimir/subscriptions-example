@@ -1,0 +1,33 @@
+services:
+  postgres:
+    container_name: subs-db
+    image: postgres
+    environment:
+      POSTGRES_DB: subs-db
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_USER: postgres
+    ports:
+      - 5432:5432
+    networks:
+      subs-network:
+        aliases:
+          - subs-db
+  deploy:
+    container_name: subs-app
+    depends_on:
+      - postgres
+    build:
+      dockerfile: Dockerfile
+    ports:
+      - 8081:8081
+    environment:
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_USER: postgres
+      URL: jdbc:postgresql://subs-db:5432/subs-db
+    networks:
+      subs-network:
+        aliases:
+          - subs-app
+networks:
+  subs-network:
+      name: subs-network
