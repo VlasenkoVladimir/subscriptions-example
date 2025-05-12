@@ -2,10 +2,7 @@ package com.vlasenko.subscriptions_example.mapper;
 
 import com.vlasenko.subscriptions_example.domain.Subscription;
 import com.vlasenko.subscriptions_example.dto.SubscriptionDto;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingConstants;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
 
 /**
  * Subscription mapper
@@ -15,7 +12,8 @@ import org.mapstruct.ReportingPolicy;
 public interface SubscriptionMapper {
     Subscription toEntity(SubscriptionDto subscriptionDto);
 
-    SubscriptionDto toSubscriptionDto(Subscription subscription);
+    SubscriptionDto toDto(Subscription subscription);
 
-    Subscription updateWithNull(SubscriptionDto subscriptionDto, @MappingTarget Subscription subscription);
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    Subscription partialUpdate(SubscriptionDto subscriptionDto, @MappingTarget Subscription subscription);
 }

@@ -41,16 +41,14 @@ public class UserService {
     }
 
     /**
-     * Create new user
+     * Create a new user
      *
      * @param userDto with user details
      * @return userDto if exist correctly
      */
     public UserDto create(UserDto userDto) {
-
         logger.debug("Called create() of UserService with UserDto: {}", userDto);
-
-        return userMapper.toUserDto(save(userMapper.toEntity(userDto)));
+        return userMapper.toDto(save(userMapper.toEntity(userDto)));
     }
 
     /**
@@ -60,10 +58,8 @@ public class UserService {
      * @return UserDto if success
      */
     public UserDto getById(long id) {
-
         logger.debug("Called getById() of UserService with User id: {}", id);
-
-        return userMapper.toUserDto(getUserById(id));
+        return userMapper.toDto(getUserById(id));
     }
 
     /**
@@ -73,17 +69,12 @@ public class UserService {
      * @return updated UserDto
      */
     public UserDto update(UserDto userDto) {
-
         logger.debug("Try to update user with dto: {}", userDto);
-
         try {
             User user = userRepository.save(userMapper.toEntity(userDto));
-
-            return userMapper.toUserDto(user);
+            return userMapper.toDto(user);
         } catch (Exception ex) {
-
             logger.info("Can't update user with reason: {}", ex.getMessage());
-
             throw new RuntimeException("Can't update user with dto: " + userDto);
         }
     }
@@ -95,37 +86,28 @@ public class UserService {
      * @return true if success
      */
     public boolean deleteUserById(long id) {
-
         logger.debug("Try to delete user with id: {}", id);
-
         try {
             userRepository.deleteById(id);
-
             return true;
         } catch (Exception ex) {
-
             logger.info("Can't delete user with reason: {}", ex.getMessage());
-
             throw new RuntimeException("Can't delete user by id: " + id);
         }
     }
 
     /**
-     * Get user bi its id from repository
+     * Get user by its id from a repository
      *
      * @param id existed user's id
      * @return User
      */
     public User getUserById(long id) {
-
         logger.debug("Try to get user with id: {}", id);
-
         try {
             return userRepository.findById(id).orElseThrow();
         } catch (Exception ex) {
-
             logger.info("Can't get user by id: {} with reason: {}", id, ex.getMessage());
-
             throw new RuntimeException("Can't get user by id: " + id);
         }
     }
@@ -137,15 +119,11 @@ public class UserService {
      * @return saved entity
      */
     public User save(User user) {
-
         logger.debug("Try to save user: {}", user);
-
         try {
             return userRepository.save(user);
         } catch (Exception ex) {
-
             logger.info("Can't save user: {}, with reason: {}", user, ex.getMessage());
-
             throw new RuntimeException("Can't save user: " + user);
         }
     }
@@ -158,21 +136,16 @@ public class UserService {
      * @return true when success
      */
     public boolean addSubscriptionToUser(long userId, SubscriptionDto subscriptionDto) {
-
         logger.debug("Try to add subscription: {} to user with id: {}", subscriptionDto, userId);
-
         try {
             Subscription sub = subscriptionRepository.findBySubscriptionName(subscriptionDto.subscriptionName()).orElseThrow();
             User user = getUserById(userId);
             List<Subscription> subscriptions = user.getSubscriptions();
             subscriptions.add(sub);
             save(user);
-
             return true;
         } catch (Exception ex) {
-
             logger.info("Can't add subscription: {} to user with id: {} with reason: {}", subscriptionDto, userId, ex.getMessage());
-
             throw new RuntimeException("Can't add subscription: " + subscriptionDto + " to user with id: " + userId);
         }
     }
@@ -184,21 +157,16 @@ public class UserService {
      * @return List of SubscriptionDto
      */
     public List<SubscriptionDto> getAllUserSubscriptions(long userId) {
-
         logger.debug("Try to get getAllUserSubscriptions with user id: {}", userId);
-
         List<Subscription> subscriptions;
-
         try {
-            subscriptions = subscriptionRepository.getSubscriptionsByUserId(userId);
-
+            User user = userRepository.findById(userId).orElseThrow();
+            subscriptions = user.getSubscriptions();
             return subscriptions.stream()
-                    .map(subscriptionMapper::toSubscriptionDto)
+                    .map(subscriptionMapper::toDto)
                     .toList();
         } catch (Exception ex) {
-
             logger.info("Can't get all subscriptions of user with id: {} with reason: {}", userId, ex.getMessage());
-
             throw new RuntimeException("Can't read subscriptions by user id: " + userId);
         }
     }
@@ -210,9 +178,7 @@ public class UserService {
      * @return true if success
      */
     public boolean removeSubscriptionByIdForUserById(long id, long sub_id) {
-
         logger.debug("Try to delete subscription with id: {} for user with id: {}", sub_id, id);
-
         try {
             User user = userRepository.findById(id).orElseThrow();
             List<Subscription> subscriptions = user.getSubscriptions();
@@ -221,38 +187,10 @@ public class UserService {
             subscriptions.remove(subscription);
             user.setSubscriptions(subscriptions);
             userRepository.save(user);
-
             return true;
         } catch (Exception ex) {
-
             logger.info("Can't remove subscription with id: {} for user with id: {} with reason: {}", sub_id, id, ex.getMessage());
-
             throw new RuntimeException("Can't remove subscription with id: " + sub_id + " for user with id: " + id);
-        }
-    }
-
-    /**
-     * Find top subscriptions
-     * @param limit of subscriptions
-     * @return List with top SubscriptionDto
-     */
-    public List<SubscriptionDto> findTopQuantity(long limit) {
-
-        logger.debug("Call findTopQuantity of SubscriptionsService with limit: {}", limit);
-
-        List<Subscription> subscriptions;
-
-        try {
-            subscriptions = subscriptionRepository.findTopWithQuantity(limit);
-
-            return subscriptions.stream()
-                    .map(subscriptionMapper::toSubscriptionDto)
-                    .toList();
-        } catch (Exception ex) {
-
-            logger.info("Can't find top {} subscriptions with reason: {}", limit, ex.getMessage());
-
-            throw new RuntimeException("Can't find top " + limit + " subscriptions");
         }
     }
 }

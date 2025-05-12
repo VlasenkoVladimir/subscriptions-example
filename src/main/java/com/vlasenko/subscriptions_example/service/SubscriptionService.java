@@ -5,6 +5,7 @@ import com.vlasenko.subscriptions_example.mapper.SubscriptionMapper;
 import com.vlasenko.subscriptions_example.repository.SubscriptionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,11 +19,12 @@ public class SubscriptionService {
 
     private static final Logger logger = LoggerFactory.getLogger(SubscriptionService.class);
     private final SubscriptionRepository subscriptionRepository;
-    private final SubscriptionMapper subscriptionMapper;
 
-    public SubscriptionService(SubscriptionRepository subscriptionRepository, SubscriptionMapper subscriptionMapper) {
+    @Autowired
+    private SubscriptionMapper subscriptionMapper;
+
+    public SubscriptionService(SubscriptionRepository subscriptionRepository) {
         this.subscriptionRepository = subscriptionRepository;
-        this.subscriptionMapper = subscriptionMapper;
     }
 
     /**
@@ -39,7 +41,7 @@ public class SubscriptionService {
             return subscriptionRepository
                     .findTopSubscriptions(limit)
                     .stream()
-                    .map(subscriptionMapper::toSubscriptionDto)
+                    .map(subscriptionMapper::toDto)
                     .toList();
         } catch (Exception ex) {
 

@@ -3,11 +3,13 @@ services:
     container_name: subs-db
     image: postgres
     environment:
+      POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256
+      PGDATA: /var/lib/postgresql/data/pgdata
       POSTGRES_DB: subs-db
-      POSTGRES_PASSWORD: 12345
       POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345
     ports:
-      - 5432:5432
+      - "5432:5432"
     networks:
       subs-network:
         aliases:
@@ -17,13 +19,14 @@ services:
     depends_on:
       - postgres
     build:
+      context: .
       dockerfile: Dockerfile
     ports:
-      - 8081:8081
+      - "8081:8081"
     environment:
-      POSTGRES_PASSWORD: 12345
-      POSTGRES_USER: postgres
       URL: jdbc:postgresql://subs-db:5432/subs-db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345
     networks:
       subs-network:
         aliases:
