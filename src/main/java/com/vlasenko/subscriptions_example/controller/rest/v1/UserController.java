@@ -6,7 +6,6 @@ import com.vlasenko.subscriptions_example.repository.SubscriptionRepository;
 import com.vlasenko.subscriptions_example.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,14 +22,9 @@ public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
-    private final SubscriptionRepository subscriptionRepository;
-
-    @Value("${app.top.limit}")
-    private long LIMIT;
 
     public UserController(UserService userService, SubscriptionRepository subscriptionRepository) {
         this.userService = userService;
-        this.subscriptionRepository = subscriptionRepository;
     }
 
     //    POST /users - создать пользователя
@@ -87,7 +81,8 @@ public class UserController {
 
         return userService.getAllUserSubscriptions(id);
     }
-//    DELETE /users/{id}/subscriptions/{sub_id} - удалить подписку
+
+    //    DELETE /users/{id}/subscriptions/{sub_id} - удалить подписку
     @DeleteMapping(path = "/{id}/subscriptions/{sub_id}")
     public boolean deleteSubscriptionToUser(@PathVariable long id, @PathVariable long sub_id) {
 
@@ -95,12 +90,4 @@ public class UserController {
 
         return userService.removeSubscriptionByIdForUserById(id, sub_id);
     }
-//    GET /subscriptions/top - получить ТОП-3 популярных подписок
-//    @GetMapping(path = "/subscriptions/top")
-//    public List<SubscriptionDto> getTopSubscriptions() {
-//
-//        logger.debug("Try to get top subscriptions with limit: {}", LIMIT);
-//
-//        return subscriptionRepository.getTopWithLimit(LIMIT);
-//    }
 }

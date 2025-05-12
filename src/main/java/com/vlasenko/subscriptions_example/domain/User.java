@@ -2,6 +2,7 @@ package com.vlasenko.subscriptions_example.domain;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,14 +25,9 @@ public class User extends GenericEntity {
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(
-            name = "user_subscription",
-            joinColumns = @JoinColumn(name = "user_id"),
-            indexes = {@Index(columnList = "list_index")}
-    )
-    @OrderColumn(name = "list_index")
-    private List<Subscription> subscriptions;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private List<Subscription> subscriptions = new ArrayList<>();
 
     public User() {
     }
