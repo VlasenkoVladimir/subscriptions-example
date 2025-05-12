@@ -21,7 +21,7 @@ public class Subscription extends GenericEntity {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "parameters", nullable = false)
-    private HashMap<String, String> parameters;
+    private HashMap<String, String> parameters = new HashMap<>();
 
     public Subscription() {
     }
@@ -39,6 +39,6 @@ public class Subscription extends GenericEntity {
     }
 
     public void setParameters(HashMap<String, String> parameters) {
-        this.parameters = parameters;
+        this.parameters = parameters != null ? parameters : new HashMap<>();
     }
 }
