@@ -30,7 +30,7 @@ public class SubscriptionController {
     }
 
     //    GET /subscriptions/top - получить ТОП популярных подписок
-    @GetMapping(path = "/subscriptions/top")
+    @GetMapping(path = "/top")
     public List<SubscriptionDto> getTopSubscriptions() {
         logger.debug("Try to get top subscriptions with limit: {}", LIMIT);
 
