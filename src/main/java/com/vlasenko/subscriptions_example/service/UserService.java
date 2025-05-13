@@ -68,11 +68,26 @@ public class UserService {
      * @param userDto new data of existed user
      * @return updated UserDto
      */
-    public UserDto update(UserDto userDto) {
+    public UserDto update(UserDto userDto, long id) {
         logger.debug("Try to update user with dto: {}", userDto);
         try {
-            User user = userRepository.save(userMapper.toEntity(userDto));
-            return userMapper.toDto(user);
+            User user = userRepository.findById(id).orElseThrow();
+                if (!userDto.firstName().isBlank()) {
+                    user.setFirstName(userDto.firstName());
+                }
+                if (!userDto.middleName().isBlank()) {
+                    user.setMiddleName(userDto.middleName());
+                }
+                if (!userDto.lastName().isBlank()) {
+                    user.setLastName(userDto.lastName());
+                }
+                if (userDto.username().isBlank()) {
+                    user.setUsername(userDto.username());
+                }
+                if (!userDto.subscriptions().isEmpty()) {
+                    user.setSubscriptions(userDto.subscriptions().stream().map(subscriptionMapper::toEntity).toList());
+                }
+                return userMapper.toDto(userRepository.save(user));
         } catch (Exception ex) {
             logger.info("Can't update user with reason: {}", ex.getMessage());
             throw new RuntimeException("Can't update user with dto: " + userDto);

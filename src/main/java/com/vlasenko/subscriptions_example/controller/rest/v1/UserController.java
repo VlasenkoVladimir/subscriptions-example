@@ -48,11 +48,11 @@ public class UserController {
 
     //    PUT /users/{id} - обновить пользователя
     @PutMapping(path = "/{id}")
-    public UserDto update(@RequestBody UserDto changedUser) {
+    public UserDto update(@RequestBody UserDto changedUser, @PathVariable long id) {
 
         logger.info("Try to update with UserDto: {}", changedUser);
 
-        return userService.update(changedUser);
+        return userService.update(changedUser, id);
     }
 
     //    DELETE /users/{id} - удалить пользователя
