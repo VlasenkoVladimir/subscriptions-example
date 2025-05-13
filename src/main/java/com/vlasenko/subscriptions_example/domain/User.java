@@ -25,8 +25,12 @@ public class User extends GenericEntity {
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "user_subscription",
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "subscription_id")}
+    )
     private List<Subscription> subscriptions = new ArrayList<>();
 
     public User() {

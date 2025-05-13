@@ -1,7 +1,9 @@
 package com.vlasenko.subscriptions_example.repository;
 
 import com.vlasenko.subscriptions_example.domain.Subscription;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -18,5 +20,6 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
 
     Optional<Subscription> findById(long id);
 
-    List<Subscription> findTop3ByOrderByIdDesc();
+    @Query(value = "SELECT s FROM Subscription s JOIN FETCH s.users u GROUP BY s ORDER BY COUNT(u) DESC")
+    List<Subscription> findTopSubscriptions(Pageable pageable);
 }

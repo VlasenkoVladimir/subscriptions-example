@@ -5,6 +5,7 @@ import com.vlasenko.subscriptions_example.mapper.SubscriptionMapper;
 import com.vlasenko.subscriptions_example.repository.SubscriptionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,25 +26,21 @@ public class SubscriptionService {
         this.subscriptionMapper = subscriptionMapper;
     }
 
-    /**
-     * Get top subscriptions with limit
-     *
-     * @return List of SubscriptionDto
-     */
-    public List<SubscriptionDto> findTop3() {
-
-        logger.debug("Called findTop3");
-
+    public List<SubscriptionDto> findTopSubscriptions(int limit) {
+        logger.debug("Called findTopSubscriptions with limit: {}", limit);
         try {
+            if (limit > 0) {
+                throw new RuntimeException("Limit must be greater than 0");
+            }
+            PageRequest pageRequest = PageRequest.of(0, limit);
+
             return subscriptionRepository
-                    .findTop3ByOrderByIdDesc()
+                    .findTopSubscriptions(pageRequest)
                     .stream()
                     .map(subscriptionMapper::toDto)
                     .toList();
         } catch (Exception ex) {
-
             logger.info("Can't find top subscriptions with reason: {}", ex.getMessage());
-
             throw new RuntimeException("Can't find top subscriptions");
         }
     }
