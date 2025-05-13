@@ -81,7 +81,7 @@ public class UserService {
                 if (!userDto.lastName().isBlank()) {
                     user.setLastName(userDto.lastName());
                 }
-                if (userDto.username().isBlank()) {
+                if (!userDto.username().isBlank()) {
                     user.setUsername(userDto.username());
                 }
                 if (!userDto.subscriptions().isEmpty()) {
